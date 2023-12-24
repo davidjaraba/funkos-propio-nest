@@ -47,6 +47,6 @@ export class Funko {
   })
   updatedAt: Date
 
-  @Column('boolean', { default: false })
+  @Column('boolean', { name: 'isdeleted', default: false })
   isDeleted: boolean
 }

@@ -34,19 +34,52 @@ export class FunkosService {
 
   }
 
-  findAll() {
-    return `This action returns all funkos`;
+  async findAll() {
+    return await this.funkoRepository.createQueryBuilder().where("isDeleted = :isDeleted", { isDeleted: false }).getMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} funko`;
+  async findOne(id: number) {
+    return (
+      await this.funkoRepository.createQueryBuilder().where("isDeleted = :isDeleted and id = :id", { isDeleted: false, id }).getOne() ||
+      (() => {
+        throw new NotFoundException('Funko no encontrado')
+      })()
+    )
   }
 
-  update(id: number, updateFunkoDto: UpdateFunkoDto) {
-    return `This action updates a #${id} funko`;
+  async update(id: number, updateFunkoDto: UpdateFunkoDto) {
+
+    this.findOne(id)
+
+    const categoria = await this.categoriaRepository.findOneBy({ nombre: updateFunkoDto.categoria }) || (() => {
+      throw new NotFoundException('Categoria no encontrada')
+    })();
+
+    const funko = this.funkoMapper.toFunko(updateFunkoDto, categoria)
+
+    return this.funkoMapper.toFunkoResponse(await this.funkoRepository.save(funko))
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} funko`;
+  async remove(id: number) {
+
+    await this.findOne(id)
+
+    return this.funkoRepository.delete(id)
+
   }
+
+  async softRemove(id: number) {
+
+      await this.findOne(id)
+
+      await this.funkoRepository.createQueryBuilder().where("id = :id", { id: id }).update(
+        Funko
+      ).set({
+        isDeleted: true
+      }).execute()
+
+  }
+
+
 }

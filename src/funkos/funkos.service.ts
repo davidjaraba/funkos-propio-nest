@@ -35,12 +35,13 @@ export class FunkosService {
   }
 
   async findAll() {
-    return await this.funkoRepository.createQueryBuilder().where("isDeleted = :isDeleted", { isDeleted: false }).getMany()
+    const res = await this.funkoRepository.createQueryBuilder('funko').where("isDeleted = :isDeleted", { isDeleted: false }).leftJoinAndSelect('funko.categoria', 'categoria').getMany()
+    return res.map((fk) => this.funkoMapper.toFunkoResponse(fk));
   }
 
   async findOne(id: number) {
-    return (
-      await this.funkoRepository.createQueryBuilder().where("isDeleted = :isDeleted and id = :id", { isDeleted: false, id }).getOne() ||
+    return this.funkoMapper.toFunkoResponse(
+      await this.funkoRepository.createQueryBuilder('funko').where("isDeleted = :isDeleted and funko.id = :id", { isDeleted: false, id }).leftJoinAndSelect('funko.categoria', 'categoria').getOne() ||
       (() => {
         throw new NotFoundException('Funko no encontrado')
       })()
@@ -49,7 +50,7 @@ export class FunkosService {
 
   async update(id: number, updateFunkoDto: UpdateFunkoDto) {
 
-    this.findOne(id)
+    await this.findOne(id)
 
     const categoria = await this.categoriaRepository.findOneBy({ nombre: updateFunkoDto.categoria }) || (() => {
       throw new NotFoundException('Categoria no encontrada')

@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { Categoria } from "./entities/categoria.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Funko } from "../funkos/entities/funko.entity";
+import { CategoriaMapper } from './mapper/categoria.mapper'
 
 @Injectable()
 export class CategoriasService {
@@ -14,19 +15,27 @@ export class CategoriasService {
     private readonly categoriaRepository: Repository<Categoria>,
     @InjectRepository(Funko)
     private readonly funkoRepository: Repository<Funko>,
+    private readonly categoriaMapper: CategoriaMapper,
     ) {
   }
 
   async create(createCategoriaDto: CreateCategoriaDto) {
+
+    if (await this.categoriaRepository.findOneBy({ nombre: createCategoriaDto.nombre })) {
+      throw new ConflictException('La categoria ya existe')
+    }
+
     return await this.categoriaRepository.save(createCategoriaDto)
   }
 
-  findAll() {
-    return `This action returns all categorias`;
+  async findAll() {
+    return await this.categoriaRepository.createQueryBuilder().where("is_deleted = :isDeleted", { isDeleted: false }).getMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categoria`;
+  async findOne(id: string) {
+    return (await this.categoriaRepository.createQueryBuilder().where("is_deleted = :isDeleted and id = :id", { isDeleted: false, id }).getOne() || (() => {
+      throw new NotFoundException('Categoria no encontrada')
+    })())
   }
 
   async findOneByNombre(nombre: string) {
@@ -38,11 +47,24 @@ export class CategoriasService {
     );
   }
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+  async update(id: string, updateCategoriaDto: UpdateCategoriaDto) {
+
+    await this.findOne(id)
+
+    if (await this.categoriaRepository.findOneBy({ nombre: updateCategoriaDto.nombre })) {
+      throw new ConflictException('La categoria ya existe')
+    }
+
+    return this.categoriaMapper.toResponseDto(await this.categoriaRepository.save({ ...updateCategoriaDto, id: id }))
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+  async remove(id: string) {
+    await this.categoriaRepository.delete(id)
   }
+
+  async removeSoft(id: string) {
+    await this.categoriaRepository.createQueryBuilder().update().set({ isDeleted: true }).where("id = :id", { id }).execute()
+  }
+
 }

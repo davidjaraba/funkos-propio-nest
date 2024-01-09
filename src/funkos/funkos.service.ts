@@ -1,14 +1,20 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { CreateFunkoDto } from './dto/create-funko.dto';
-import { UpdateFunkoDto } from './dto/update-funko.dto';
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { CreateFunkoDto } from "./dto/create-funko.dto";
+import { UpdateFunkoDto } from "./dto/update-funko.dto";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Funko } from "./entities/funko.entity";
 import { Categoria } from "../categorias/entities/categoria.entity";
 import { FunkoMapper } from "./mappers/funko.mapper";
+import { StorageService } from "../storage/storage.service";
+import { Notificacion, NotificacionTipo } from "../notifications/entities/notification.entity";
+import { ResponseFunkoDto } from "./dto/response-funko.dto";
+import { NotificationsGateway } from "../notifications/notifications.gateway";
 
 @Injectable()
 export class FunkosService {
+
+  private readonly logger: Logger = new Logger(FunkosService.name)
 
   constructor(
     @InjectRepository(Funko)
@@ -16,6 +22,8 @@ export class FunkosService {
     @InjectRepository(Categoria)
     private readonly categoriaRepository: Repository<Categoria>,
     private readonly funkoMapper: FunkoMapper,
+    private readonly storageService: StorageService,
+    private readonly funkoNotificationsGateway: NotificationsGateway,
   ) {
   }
 
@@ -30,7 +38,11 @@ export class FunkosService {
 
     await this.funkoRepository.save(funko)
 
-    return this.funkoMapper.toFunkoResponse(funko)
+    const res = this.funkoMapper.toFunkoResponse(funko)
+
+    this.onChange(NotificacionTipo.CREATE, res)
+
+    return res
 
   }
 
@@ -82,5 +94,38 @@ export class FunkosService {
 
   }
 
+  async updateImage(id: number, file: Express.Multer.File, req: Request){
+
+    if (!file) throw new BadRequestException('Fichero no enviado')
+
+    const foundFk = await this.findOne(id)
+
+    if (foundFk.imagen && this.storageService.exists(foundFk.imagen)){
+      this.storageService.removeFile(foundFk.imagen)
+    }
+
+    const funkoToUpdate = { ...foundFk, imagen: file.filename };
+
+    const categoria = await this.categoriaRepository.findOneBy({ nombre: funkoToUpdate.categoria }) || (() => {
+      throw new NotFoundException('Categoria no encontrada')
+    })();
+
+    const funko = this.funkoMapper.toFunko(funkoToUpdate, categoria)
+
+    await this.funkoRepository.save(funko)
+
+    return this.funkoMapper.toFunkoResponse(funko)
+
+  }
+
+  private onChange(tipo: NotificacionTipo, data: ResponseFunkoDto) {
+    const notificacion = new Notificacion<ResponseFunkoDto>(
+      'PRODUCTOS',
+      tipo,
+      data,
+      new Date(),
+    )
+    this.funkoNotificationsGateway.sendMessage(notificacion)
+  }
 
 }

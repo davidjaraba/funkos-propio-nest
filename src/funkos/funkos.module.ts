@@ -5,12 +5,14 @@ import { Funko } from "./entities/funko.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Categoria } from "../categorias/entities/categoria.entity";
 import { FunkoMapper } from './mappers/funko.mapper';
+import { StorageService } from "../storage/storage.service";
+import { NotificationsGateway } from "../notifications/notifications.gateway";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Funko, Categoria]),
+    TypeOrmModule.forFeature([Funko, Categoria])
   ],
   controllers: [FunkosController],
-  providers: [FunkosService, FunkoMapper, ],
+  providers: [FunkosService, FunkoMapper, StorageService, NotificationsGateway],
 })
 export class FunkosModule {}

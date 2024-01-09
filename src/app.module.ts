@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { FunkosModule } from './funkos/funkos.module';
 import { CategoriasModule } from './categorias/categorias.module';
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { StorageModule } from './storage/storage.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     database: 'NEST_DB', // Nombre de la base de datos
     entities: [__dirname + '/**/*.entity{.ts,.js}'], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
     synchronize: true, // Sincronizar la base de datos
-  }),],
+  }),
+    StorageModule,
+    NotificationsModule,],
   controllers: [AppController],
   providers: [AppService],
 })

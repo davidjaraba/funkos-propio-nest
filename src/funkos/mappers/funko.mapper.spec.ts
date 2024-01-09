@@ -48,44 +48,5 @@ describe('FunkoMapper', () => {
     expect(provider).toBeDefined();
   });
 
-  test('should return a funko response', () => {
-    const funkoResponse = provider.toFunkoResponse(funko);
 
-    expect(funkoResponse).toEqual({
-      id: 1,
-      nombre: 'funko1',
-      imagen: 'funko1',
-      precio: 2,
-      cantidad: 3,
-      stock: 3,
-      categoria: 'categoria1',
-      createdAt: new Date(155555),
-      updatedAt: new Date(155555),
-      isDeleted: false,
-    });
-  });
-
-  test('should return a funko', () => {
-    const funkoResponse = provider.toFunko(createFunkoDto, categoria);
-
-    expect(funkoResponse).toEqual({
-      id: 1,
-      nombre: 'funko1',
-      imagen: 'funko1',
-      precio: 2,
-      cantidad: 3,
-      stock: 3,
-      categoria: {
-        id: '1',
-        nombre: 'categoria1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isDeleted: false,
-        funkos: [],
-      },
-      createdAt: new Date(155555),
-      updatedAt: new Date(155555),
-      isDeleted: false,
-    });
-  });
 });

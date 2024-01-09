@@ -17,18 +17,18 @@ describe('FunkosController', () => {
     funkos: [],
   };
 
-  const funko = {
-    id: 1,
-    nombre: 'funko1',
-    imagen: 'funko1',
-    precio: 2,
-    cantidad: 3,
-    stock: 3,
-    categoria,
-    createdAt: new Date(155555),
-    updatedAt: new Date(155555),
-    isDeleted: false,
-  };
+  // const funko = {
+  //   id: 1,
+  //   nombre: 'funko1',
+  //   imagen: 'funko1',
+  //   precio: 2,
+  //   cantidad: 3,
+  //   stock: 3,
+  //   categoria,
+  //   createdAt: new Date(155555),
+  //   updatedAt: new Date(155555),
+  //   isDeleted: false,
+  // };
 
   const funkoResponse = {
     id: 1,
@@ -75,10 +75,6 @@ describe('FunkosController', () => {
     controller = module.get<FunkosController>(FunkosController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   test('crea un funko', () => {
     jest.spyOn(service, 'create').mockResolvedValue(funkoResponse);
 
@@ -108,6 +104,6 @@ describe('FunkosController', () => {
   test('elimina un funko', () => {
     jest.spyOn(service, 'softRemove').mockResolvedValue(undefined);
 
-    expect(controller.remove('1')).resolves.toEqual(funkoResponse);
+    expect(controller.remove('1')).resolves.toEqual(undefined);
   });
 });

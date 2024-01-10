@@ -19,8 +19,10 @@ import { FunkoExistsGuard } from "./guards/funko-exists-guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname, parse } from 'path'
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 
+@UseInterceptors(CacheInterceptor)
 @Controller('v1/funkos')
 export class FunkosController {
   constructor(private readonly funkosService: FunkosService) {}

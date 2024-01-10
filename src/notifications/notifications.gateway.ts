@@ -27,7 +27,7 @@ export class NotificationsGateway {
   sendMessage(
     notification: Notificacion<ResponseFunkoDto | ResponseCategoriaDto>,
   ) {
-    if (notification instanceof Funko){
+    if (!(notification.data instanceof ResponseCategoriaDto) && notification.data.precio) {
       this.server.emit('funkosUpdates', notification)
     } else this.server.emit('categoriasUpdates', notification);
   }

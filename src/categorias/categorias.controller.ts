@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put, ParseUUIDPipe } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Put,
+  ParseUUIDPipe,
+  UseInterceptors
+} from "@nestjs/common";
 import { CategoriasService } from './categorias.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
 @Controller('v1/categorias')
 export class CategoriasController {
   constructor(private readonly categoriasService: CategoriasService) {}

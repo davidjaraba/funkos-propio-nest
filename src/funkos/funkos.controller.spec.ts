@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FunkosController } from './funkos.controller';
 import { FunkosService } from './funkos.service';
 import { CreateFunkoDto } from './dto/create-funko.dto';
+import { CacheModule } from "@nestjs/cache-manager";
 
 describe('FunkosController', () => {
   let controller: FunkosController;
@@ -62,6 +63,7 @@ describe('FunkosController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [FunkosController],
       providers: [
         {

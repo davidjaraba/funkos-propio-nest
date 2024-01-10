@@ -9,12 +9,20 @@ import { ResponseFunkoDto } from './dto/response-funko.dto'
 import { NotFoundException } from '@nestjs/common'
 import { ResponseCategoriaDto } from '../categorias/dto/response-categoria.dto'
 import { CreateFunkoDto } from './dto/create-funko.dto'
+import { StorageService } from "../storage/storage.service";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { NotificationsGateway } from "../notifications/notifications.gateway";
+import { Cache } from 'cache-manager'
+import { UpdateFunkoDto } from "./dto/update-funko.dto";
 
 describe('FunkosService', () => {
   let service: FunkosService;
   let funkoRepo: Repository<Funko>
   let mapper: FunkoMapper
   let categoriaRepo: Repository<Categoria>
+  let storageService: StorageService
+  let cacheManager: Cache
+  let funkosNotificationsGateway: NotificationsGateway
 
   let funkosToTest: Funko[] = [
     {
@@ -64,12 +72,35 @@ describe('FunkosService', () => {
 
   }
 
+  const storageServiceMock = {
+    removeFile: jest.fn(),
+    getFileNameWithouUrl: jest.fn(),
+  }
+
+  const productsNotificationsGatewayMock = {
+    sendMessage: jest.fn(),
+  }
+
+  const cacheManagerMock = {
+    get: jest.fn(() => Promise.resolve()),
+    set: jest.fn(() => Promise.resolve()),
+    store: {
+      keys: jest.fn(),
+    },
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [FunkosService,
         {provide: getRepositoryToken(Funko), useClass: Repository},
         {provide: getRepositoryToken(Categoria), useClass: Repository},
-        {provide: FunkoMapper, useValue: funkoMapper}
+        {provide: FunkoMapper, useValue: funkoMapper},
+        { provide: StorageService, useValue: storageServiceMock },
+        {
+          provide: NotificationsGateway,
+          useValue: productsNotificationsGatewayMock,
+        },
+        { provide: CACHE_MANAGER, useValue: cacheManagerMock },
       ],
     }).compile();
 
@@ -77,6 +108,11 @@ describe('FunkosService', () => {
     funkoRepo = module.get(getRepositoryToken(Funko))
     service = module.get<FunkosService>(FunkosService);
     categoriaRepo = module.get(getRepositoryToken(Categoria))
+    storageService = module.get<StorageService>(StorageService) // Obtenemos una instancia del servicio de almacenamiento
+    funkosNotificationsGateway = module.get<NotificationsGateway>(
+      NotificationsGateway,
+    ) // Obtenemos una instancia del gateway de notificaciones
+    cacheManager = module.get<Cache>(CACHE_MANAGER) // Obtenemos una instancia del cache manager
   });
 
   it('should be defined', () => {
@@ -182,6 +218,8 @@ describe('FunkosService', () => {
 
       jest.spyOn(mapper, 'toFunkoResponse').mockReturnValue(mockResponseFunkoDto)
 
+      jest.spyOn(cacheManager.store, 'keys').mockResolvedValue([])
+
       expect(await service.create(new CreateFunkoDto())).toEqual(
         mockResponseFunkoDto,
       );
@@ -283,6 +321,50 @@ describe('FunkosService', () => {
 
   })
 
+  describe('updateImage', ()=>{
+
+      test('actualiza la imagen de un producto', async()=>{
+
+        const mockRequest = {
+          protocol: 'http',
+          get: () => 'localhost',
+        }
+        const mockFile = {
+          filename: 'new_image',
+        }
+
+        const mockProductoEntity = new Funko()
+        const mockResponseFunkoDto = new ResponseFunkoDto()
+
+        const mockQueryBuilder = {
+
+          where: jest.fn().mockReturnThis(),
+          getOne: jest.fn().mockReturnThis(),
+          leftJoinAndSelect: jest.fn().mockReturnThis()
+
+        }
+
+        jest.spyOn(funkoRepo, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any)
+
+        jest.spyOn(categoriaRepo, 'findOneBy').mockResolvedValue(new Categoria())
+
+        jest.spyOn(mapper, 'toFunko').mockReturnValue(mockProductoEntity)
+
+        jest.spyOn(funkoRepo, 'save').mockResolvedValue(mockProductoEntity)
+
+        jest.spyOn(mapper, 'toFunkoResponse').mockReturnValue(mockResponseFunkoDto)
+
+        expect(await service.updateImage(1, mockFile as any, mockRequest as any)).toEqual(
+          mockResponseFunkoDto,
+        );
+
+        expect(mapper.toFunkoResponse).toHaveBeenCalled()
+        expect(funkoRepo.save).toHaveBeenCalled()
+
+
+      })
+
+  })
 
 
 });

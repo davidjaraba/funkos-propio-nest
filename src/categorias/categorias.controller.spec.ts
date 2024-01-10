@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriasController } from './categorias.controller';
 import { CategoriasService } from './categorias.service';
+import { CacheModule } from "@nestjs/cache-manager";
 
 describe('CategoriasController', () => {
   let controller: CategoriasController;
@@ -29,6 +30,7 @@ describe('CategoriasController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [CategoriasController],
       providers: [
         {

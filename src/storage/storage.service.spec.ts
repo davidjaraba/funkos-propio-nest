@@ -15,4 +15,11 @@ describe('StorageService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('buscar un fichero en nuestra carpeta de almacenamiento', () => {
+
+
+
+  })
+
 });

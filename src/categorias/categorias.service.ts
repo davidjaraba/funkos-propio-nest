@@ -92,6 +92,8 @@ export class CategoriasService {
 
     await this.cacheManager.set(`cat_${id}`, res)
 
+    return res
+
   }
 
   async update(id: string, updateCategoriaDto: UpdateCategoriaDto) {
@@ -113,6 +115,8 @@ export class CategoriasService {
     await this.invalidateCacheKey('all_cats')
 
     this.onChange(NotificacionTipo.UPDATE, res)
+
+    return res
   }
 
   async remove(id: string) {

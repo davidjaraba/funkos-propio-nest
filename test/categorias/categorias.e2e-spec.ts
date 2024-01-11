@@ -6,6 +6,7 @@ import { CreateCategoriaDto } from '../../src/categorias/dto/create-categoria.dt
 import { UpdateCategoriaDto } from '../../src/categorias/dto/update-categoria.dto';
 import { CategoriasController } from '../../src/categorias/categorias.controller';
 import { CategoriasService } from '../../src/categorias/categorias.service';
+import { CacheModule } from "@nestjs/cache-manager";
 
 describe('CategoriaController (e2e)', () => {
   let app: INestApplication;
@@ -49,6 +50,7 @@ describe('CategoriaController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [CategoriasController],
       providers: [
         CategoriasService,

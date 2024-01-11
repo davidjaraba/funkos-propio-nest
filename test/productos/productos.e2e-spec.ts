@@ -6,6 +6,7 @@ import { FunkosService } from '../../src/funkos/funkos.service';
 import { ResponseFunkoDto } from '../../src/funkos/dto/response-funko.dto';
 import { CreateFunkoDto } from '../../src/funkos/dto/create-funko.dto';
 import { UpdateFunkoDto } from '../../src/funkos/dto/update-funko.dto';
+import { CacheModule } from "@nestjs/cache-manager";
 
 describe('FunkoController (e2e)', () => {
   let app: INestApplication;
@@ -60,10 +61,12 @@ describe('FunkoController (e2e)', () => {
     update: jest.fn(),
     remove: jest.fn(),
     softRemove: jest.fn(),
+    updateImage: jest.fn()
   };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [FunkosController],
       providers: [
         FunkosService,
@@ -153,4 +156,23 @@ describe('FunkoController (e2e)', () => {
       });
     });
   });
+
+  describe('UPDATE /funkos/:id', ()=>{
+
+    test('actualiza una imagen', async () => {
+
+      const file = Buffer.from('file')
+
+      mockFunkosService.updateImage.mockResolvedValue(funkosToTest[0])
+
+      mockFunkosService.findOne.mockResolvedValue(funkosToTest[0])
+
+      await request(app.getHttpServer())
+        .patch(`${myEndpoint}/imagen/${funkosToTest[0].id}`)
+        .attach('file', file, 'image.jpg')
+        .set('Content-Type', 'multipart/form-data')
+        .expect(200)
+
+    });
+  })
 });

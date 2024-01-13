@@ -10,17 +10,20 @@ import {
   Put,
   ParseIntPipe,
   UseGuards,
-  UseInterceptors, UploadedFile, Req, BadRequestException
-} from "@nestjs/common";
-import { FunkosService } from './funkos.service';
-import { CreateFunkoDto } from './dto/create-funko.dto';
-import { UpdateFunkoDto } from './dto/update-funko.dto';
-import { FunkoExistsGuard } from "./guards/funko-exists-guard";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
+  UseInterceptors,
+  UploadedFile,
+  Req,
+  BadRequestException,
+} from '@nestjs/common'
+import { FunkosService } from './funkos.service'
+import { CreateFunkoDto } from './dto/create-funko.dto'
+import { UpdateFunkoDto } from './dto/update-funko.dto'
+import { FunkoExistsGuard } from './guards/funko-exists-guard'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { diskStorage } from 'multer'
 import { extname, parse } from 'path'
-import { CacheInterceptor } from '@nestjs/cache-manager';
-
+import { CacheInterceptor } from '@nestjs/cache-manager'
+import { Paginate, PaginateQuery } from 'nestjs-paginate'
 
 @UseInterceptors(CacheInterceptor)
 @Controller('v1/funkos')
@@ -30,28 +33,31 @@ export class FunkosController {
   @Post()
   @HttpCode(201)
   create(@Body() createFunkoDto: CreateFunkoDto) {
-    return this.funkosService.create(createFunkoDto);
+    return this.funkosService.create(createFunkoDto)
   }
 
   @Get()
-  findAll() {
-    return this.funkosService.findAll();
+  findAll(@Paginate() query: PaginateQuery) {
+    return this.funkosService.findAll(query)
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.funkosService.findOne(+id);
+    return this.funkosService.findOne(+id)
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateFunkoDto: UpdateFunkoDto) {
-    return this.funkosService.update(+id, updateFunkoDto);
+  update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateFunkoDto: UpdateFunkoDto,
+  ) {
+    return this.funkosService.update(+id, updateFunkoDto)
   }
 
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: string) {
-    return this.funkosService.softRemove(+id);
+    return this.funkosService.softRemove(+id)
   }
 
   @UseGuards(FunkoExistsGuard)
@@ -98,10 +104,6 @@ export class FunkosController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
-
     return await this.funkosService.updateImage(id, file, req)
-
   }
-
-
 }

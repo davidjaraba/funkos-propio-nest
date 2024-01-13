@@ -1,28 +1,28 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { StorageService } from './storage.service';
-import * as fs from 'fs';
-import { join } from 'path';
+import { Test, TestingModule } from '@nestjs/testing'
+import { StorageService } from './storage.service'
+import * as fs from 'fs'
+import { join } from 'path'
 
 describe('StorageService', () => {
-  let service: StorageService;
+  let service: StorageService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [StorageService],
-    }).compile();
+    }).compile()
 
-    service = module.get<StorageService>(StorageService);
-  });
+    service = module.get<StorageService>(StorageService)
+  })
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    expect(service).toBeDefined()
+  })
 
   describe('findFile', () => {
     it('buscar un fichero en nuestra carpeta de almacenamiento', () => {
-      const fileName: string = 'hola.png';
+      const fileName: string = 'hola.png'
 
-      jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+      jest.spyOn(fs, 'existsSync').mockReturnValue(true)
 
       expect(service.findFile(fileName)).toEqual(
         join(
@@ -32,21 +32,21 @@ describe('StorageService', () => {
             fileName,
           ),
         ),
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('removeFile', () => {
     it('elimina un fichero en nuestra carpeta de almacenamiento', () => {
-      const fileName: string = 'hola.png';
+      const fileName: string = 'hola.png'
 
-      jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-      jest.spyOn(fs, 'unlinkSync').mockReturnThis();
+      jest.spyOn(fs, 'existsSync').mockReturnValue(true)
+      jest.spyOn(fs, 'unlinkSync').mockReturnThis()
 
-      service.removeFile(fileName);
+      service.removeFile(fileName)
 
-      expect(fs.existsSync).toHaveBeenCalled();
-      expect(fs.unlinkSync).toHaveBeenCalled();
-    });
-  });
-});
+      expect(fs.existsSync).toHaveBeenCalled()
+      expect(fs.unlinkSync).toHaveBeenCalled()
+    })
+  })
+})

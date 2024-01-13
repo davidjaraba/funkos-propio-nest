@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CategoriasController } from './categorias.controller';
-import { CategoriasService } from './categorias.service';
-import { CacheModule } from "@nestjs/cache-manager";
+import { Test, TestingModule } from '@nestjs/testing'
+import { CategoriasController } from './categorias.controller'
+import { CategoriasService } from './categorias.service'
+import { CacheModule } from '@nestjs/cache-manager'
 
 describe('CategoriasController', () => {
-  let controller: CategoriasController;
-  let service: CategoriasService;
+  let controller: CategoriasController
+  let service: CategoriasService
 
   const categoriaResponse = {
     id: '1',
@@ -14,11 +14,11 @@ describe('CategoriasController', () => {
     updatedAt: new Date(),
     isDeleted: false,
     funkos: [],
-  };
+  }
 
   const createCategoriaDto = {
     nombre: 'categoria1',
-  };
+  }
 
   const categoriasServiceMock = {
     findAll: jest.fn(),
@@ -26,7 +26,7 @@ describe('CategoriasController', () => {
     create: jest.fn(),
     update: jest.fn(),
     removeSoft: jest.fn(),
-  };
+  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,57 +38,57 @@ describe('CategoriasController', () => {
           useValue: categoriasServiceMock,
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<CategoriasService>(CategoriasService);
-    controller = module.get<CategoriasController>(CategoriasController);
-  });
+    service = module.get<CategoriasService>(CategoriasService)
+    controller = module.get<CategoriasController>(CategoriasController)
+  })
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+    expect(controller).toBeDefined()
+  })
 
   describe('create', () => {
     test('should return a category', async () => {
-      jest.spyOn(service, 'create').mockResolvedValueOnce(categoriaResponse);
+      jest.spyOn(service, 'create').mockResolvedValueOnce(categoriaResponse)
 
       await expect(controller.create(createCategoriaDto)).resolves.toEqual(
         categoriaResponse,
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('findAll', () => {
     test('should return an array of categories', async () => {
-      jest.spyOn(service, 'findAll').mockResolvedValueOnce([categoriaResponse]);
+      jest.spyOn(service, 'findAll').mockResolvedValueOnce([categoriaResponse])
 
-      await expect(controller.findAll()).resolves.toEqual([categoriaResponse]);
-    });
-  });
+      await expect(controller.findAll()).resolves.toEqual([categoriaResponse])
+    })
+  })
 
   describe('findOne', () => {
     test('should return a category', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(categoriaResponse);
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(categoriaResponse)
 
-      await expect(controller.findOne('1')).resolves.toEqual(categoriaResponse);
-    });
-  });
+      await expect(controller.findOne('1')).resolves.toEqual(categoriaResponse)
+    })
+  })
 
   describe('update', () => {
     test('should return a category', async () => {
-      jest.spyOn(service, 'update').mockResolvedValueOnce(categoriaResponse);
+      jest.spyOn(service, 'update').mockResolvedValueOnce(categoriaResponse)
 
       await expect(controller.update('1', createCategoriaDto)).resolves.toEqual(
         categoriaResponse,
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('remove', () => {
     test('should return a category', async () => {
-      jest.spyOn(service, 'removeSoft').mockResolvedValue(undefined);
+      jest.spyOn(service, 'removeSoft').mockResolvedValue(undefined)
 
-      await expect(controller.remove('1')).resolves.toEqual(undefined);
-    });
-  });
-});
+      await expect(controller.remove('1')).resolves.toEqual(undefined)
+    })
+  })
+})

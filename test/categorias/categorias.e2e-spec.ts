@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, NotFoundException } from '@nestjs/common';
-import * as request from 'supertest';
-import { ResponseCategoriaDto } from '../../src/categorias/dto/response-categoria.dto';
-import { CreateCategoriaDto } from '../../src/categorias/dto/create-categoria.dto';
-import { UpdateCategoriaDto } from '../../src/categorias/dto/update-categoria.dto';
-import { CategoriasController } from '../../src/categorias/categorias.controller';
-import { CategoriasService } from '../../src/categorias/categorias.service';
-import { CacheModule } from "@nestjs/cache-manager";
+import { Test, TestingModule } from '@nestjs/testing'
+import { INestApplication, NotFoundException } from '@nestjs/common'
+import * as request from 'supertest'
+import { ResponseCategoriaDto } from '../../src/categorias/dto/response-categoria.dto'
+import { CreateCategoriaDto } from '../../src/categorias/dto/create-categoria.dto'
+import { UpdateCategoriaDto } from '../../src/categorias/dto/update-categoria.dto'
+import { CategoriasController } from '../../src/categorias/categorias.controller'
+import { CategoriasService } from '../../src/categorias/categorias.service'
+import { CacheModule } from '@nestjs/cache-manager'
 
 describe('CategoriaController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
-  const myEndpoint = '/v1/categorias';
+  const myEndpoint = '/v1/categorias'
 
   const categoriasToTest: ResponseCategoriaDto[] = [
     {
@@ -30,15 +30,15 @@ describe('CategoriaController (e2e)', () => {
       isDeleted: false,
       funkos: [],
     },
-  ];
+  ]
 
   const createCategoriaDto: CreateCategoriaDto = {
     nombre: 'categoria1',
-  };
+  }
 
   const updateCategoriaDto: UpdateCategoriaDto = {
     nombre: 'categoria1',
-  };
+  }
 
   const mockCategoriasService = {
     findAll: jest.fn(),
@@ -46,7 +46,7 @@ describe('CategoriaController (e2e)', () => {
     create: jest.fn(),
     update: jest.fn(),
     removeSoft: jest.fn(),
-  };
+  }
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -56,89 +56,89 @@ describe('CategoriaController (e2e)', () => {
         CategoriasService,
         { provide: CategoriasService, useValue: mockCategoriasService },
       ],
-    }).compile();
+    }).compile()
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+    app = moduleFixture.createNestApplication()
+    await app.init()
+  })
 
   describe('GET /categorias', () => {
     it('devuelve todas las categorias', async () => {
-      mockCategoriasService.findAll.mockResolvedValue(categoriasToTest);
+      mockCategoriasService.findAll.mockResolvedValue(categoriasToTest)
 
       const { body } = await request(app.getHttpServer())
         .get(`${myEndpoint}`)
-        .expect(200);
+        .expect(200)
       expect(() => {
-        expect(body).toEqual(categoriasToTest);
-        expect(mockCategoriasService.findAll).toHaveBeenCalled();
-      });
-    });
-  });
+        expect(body).toEqual(categoriasToTest)
+        expect(mockCategoriasService.findAll).toHaveBeenCalled()
+      })
+    })
+  })
 
   describe('GET /categorias/:id', () => {
     it('devuelve una categoria por la id', async () => {
-      mockCategoriasService.findOne.mockResolvedValue(categoriasToTest[0]);
+      mockCategoriasService.findOne.mockResolvedValue(categoriasToTest[0])
 
       const { body } = await request(app.getHttpServer())
         .get(`${myEndpoint}/${categoriasToTest[0].id}`)
-        .expect(200);
+        .expect(200)
       expect(() => {
-        expect(body).toEqual(categoriasToTest[0]);
-        expect(mockCategoriasService.findOne).toHaveBeenCalled();
-      });
-    });
+        expect(body).toEqual(categoriasToTest[0])
+        expect(mockCategoriasService.findOne).toHaveBeenCalled()
+      })
+    })
 
     it('devuelve 404 si no encuentra la categoria', async () => {
-      mockCategoriasService.findOne.mockRejectedValue(new NotFoundException());
+      mockCategoriasService.findOne.mockRejectedValue(new NotFoundException())
 
       await request(app.getHttpServer())
         .get(`${myEndpoint}/${categoriasToTest[0].id}`)
-        .expect(404);
-    });
-  });
+        .expect(404)
+    })
+  })
 
   describe('POST /categorias', () => {
     it('crea una categoria', async () => {
-      mockCategoriasService.create.mockResolvedValue(categoriasToTest[0]);
+      mockCategoriasService.create.mockResolvedValue(categoriasToTest[0])
 
       const { body } = await request(app.getHttpServer())
         .post(`${myEndpoint}`)
         .send(createCategoriaDto)
-        .expect(201);
+        .expect(201)
       expect(() => {
-        expect(body).toEqual(categoriasToTest[0]);
-        expect(mockCategoriasService.create).toHaveBeenCalled();
-      });
-    });
-  });
+        expect(body).toEqual(categoriasToTest[0])
+        expect(mockCategoriasService.create).toHaveBeenCalled()
+      })
+    })
+  })
 
   describe('PUT /categorias/:id', () => {
     it('actualiza una categoria', async () => {
-      mockCategoriasService.update.mockResolvedValue(categoriasToTest[0]);
+      mockCategoriasService.update.mockResolvedValue(categoriasToTest[0])
 
       const { body } = await request(app.getHttpServer())
         .put(`${myEndpoint}/${categoriasToTest[0].id}`)
         .send(updateCategoriaDto)
-        .expect(200);
+        .expect(200)
       expect(() => {
-        expect(body).toEqual(categoriasToTest[0]);
-        expect(mockCategoriasService.update).toHaveBeenCalled();
-      });
-    });
-  });
+        expect(body).toEqual(categoriasToTest[0])
+        expect(mockCategoriasService.update).toHaveBeenCalled()
+      })
+    })
+  })
 
   describe('DELETE /categorias/:id', () => {
     it('borra una categoria', async () => {
-      mockCategoriasService.removeSoft.mockResolvedValue(categoriasToTest[0]);
+      mockCategoriasService.removeSoft.mockResolvedValue(categoriasToTest[0])
 
       const { body } = await request(app.getHttpServer())
         .delete(`${myEndpoint}/${categoriasToTest[0].id}`)
-        .expect(200);
+        .expect(200)
       expect(() => {
-        expect(body).toEqual(categoriasToTest[0]);
-        expect(mockCategoriasService.removeSoft).toHaveBeenCalled();
-      });
-    });
-  });
-});
+        expect(body).toEqual(categoriasToTest[0])
+        expect(mockCategoriasService.removeSoft).toHaveBeenCalled()
+      })
+    })
+  })
+})

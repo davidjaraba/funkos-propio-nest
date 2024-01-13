@@ -1,13 +1,18 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from "@nestjs/websockets";
-import { NotificationsService } from './notifications.service';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
-import { Notificacion } from "./entities/notification.entity";
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+  WebSocketServer,
+} from '@nestjs/websockets'
+import { NotificationsService } from './notifications.service'
+import { CreateNotificationDto } from './dto/create-notification.dto'
+import { UpdateNotificationDto } from './dto/update-notification.dto'
+import { Notificacion } from './entities/notification.entity'
 import { Server, Socket } from 'socket.io'
-import { Logger } from "@nestjs/common";
-import { ResponseFunkoDto } from "../funkos/dto/response-funko.dto";
-import { ResponseCategoriaDto } from "../categorias/dto/response-categoria.dto";
-import { Funko } from "../funkos/entities/funko.entity";
+import { Logger } from '@nestjs/common'
+import { ResponseFunkoDto } from '../funkos/dto/response-funko.dto'
+import { ResponseCategoriaDto } from '../categorias/dto/response-categoria.dto'
+import { Funko } from '../funkos/entities/funko.entity'
 
 const ENDPOINT: string = `/ws`
 
@@ -27,9 +32,12 @@ export class NotificationsGateway {
   sendMessage(
     notification: Notificacion<ResponseFunkoDto | ResponseCategoriaDto>,
   ) {
-    if (!(notification.data instanceof ResponseCategoriaDto) && notification.data.precio) {
+    if (
+      !(notification.data instanceof ResponseCategoriaDto) &&
+      notification.data.precio
+    ) {
       this.server.emit('funkosUpdates', notification)
-    } else this.server.emit('categoriasUpdates', notification);
+    } else this.server.emit('categoriasUpdates', notification)
   }
 
   // Si quiero leer lo que llega y reenviarlo

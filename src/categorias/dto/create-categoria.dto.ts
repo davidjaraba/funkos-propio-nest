@@ -1,5 +1,3 @@
 export class CreateCategoriaDto {
-
-  nombre: string;
-
+  nombre: string
 }

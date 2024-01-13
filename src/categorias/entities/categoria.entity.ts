@@ -1,10 +1,11 @@
 import {
   Column,
-  CreateDateColumn, Entity,
+  CreateDateColumn,
+  Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm'
 import { Funko } from '../../funkos/entities/funko.entity'
 
 @Entity('categorias')

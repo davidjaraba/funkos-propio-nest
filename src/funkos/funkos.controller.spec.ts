@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FunkosController } from './funkos.controller';
 import { FunkosService } from './funkos.service';
 import { CreateFunkoDto } from './dto/create-funko.dto';
-import { CacheModule } from "@nestjs/cache-manager";
+import { CacheModule } from '@nestjs/cache-manager';
+import { Paginated } from 'nestjs-paginate';
+import { ResponseFunkoDto } from './dto/response-funko.dto';
 
 describe('FunkosController', () => {
   let controller: FunkosController;
@@ -83,29 +85,52 @@ describe('FunkosController', () => {
     expect(controller.create(createFunkoDto)).resolves.toEqual(funkoResponse);
   });
 
-  test('obtiene todos los funkos', () => {
-    jest.spyOn(service, 'findAll').mockResolvedValue([funkoResponse]);
+  describe('obtiene todos los funkos', () => {
+    test('should get all Productos', async () => {
+      const paginateOptions = {
+        page: 1,
+        limit: 10,
+        path: 'funkos',
+      };
 
-    expect(controller.findAll()).resolves.toEqual([funkoResponse]);
-  });
+      const testFunkos = {
+        data: [],
+        meta: {
+          itemsPerPage: 10,
+          totalItems: 1,
+          currentPage: 1,
+          totalPages: 1,
+        },
+        links: {
+          current: 'funkos?page=1&limit=10&sortBy=nombre:ASC',
+        },
+      } as Paginated<ResponseFunkoDto>;
 
-  test('obtiene un funko', () => {
-    jest.spyOn(service, 'findOne').mockResolvedValue(funkoResponse);
+      jest.spyOn(service, 'findAll').mockResolvedValue(testFunkos);
 
-    expect(controller.findOne('1')).resolves.toEqual(funkoResponse);
-  });
+      await expect(controller.findAll(paginateOptions)).resolves.toEqual(
+        testFunkos,
+      );
+    });
 
-  test('actualiza un funko', () => {
-    jest.spyOn(service, 'update').mockResolvedValue(funkoResponse);
+    test('obtiene un funko', () => {
+      jest.spyOn(service, 'findOne').mockResolvedValue(funkoResponse);
 
-    expect(controller.update('1', createFunkoDto)).resolves.toEqual(
-      funkoResponse,
-    );
-  });
+      expect(controller.findOne('1')).resolves.toEqual(funkoResponse);
+    });
 
-  test('elimina un funko', () => {
-    jest.spyOn(service, 'softRemove').mockResolvedValue(undefined);
+    test('actualiza un funko', () => {
+      jest.spyOn(service, 'update').mockResolvedValue(funkoResponse);
 
-    expect(controller.remove('1')).resolves.toEqual(undefined);
+      expect(controller.update('1', createFunkoDto)).resolves.toEqual(
+        funkoResponse,
+      );
+    });
+
+    test('elimina un funko', () => {
+      jest.spyOn(service, 'softRemove').mockResolvedValue(undefined);
+
+      expect(controller.remove('1')).resolves.toEqual(undefined);
+    });
   });
 });

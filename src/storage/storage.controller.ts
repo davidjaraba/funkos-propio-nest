@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  Res, Logger, StreamableFile
-} from "@nestjs/common";
-import { StorageService } from './storage.service';
-import { createReadStream } from 'fs';
-import { Response } from 'express';
+  Res,
+  Logger,
+  StreamableFile,
+} from '@nestjs/common'
+import { StorageService } from './storage.service'
+import { createReadStream } from 'fs'
+import { Response } from 'express'
 
 @Controller('storage')
 @Controller('storage')
@@ -26,5 +28,4 @@ export class StorageController {
     this.logger.log(`Fichero encontrado ${filePath}`)
     return res.sendFile(filePath)
   }
-
 }

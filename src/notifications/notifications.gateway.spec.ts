@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationsGateway } from './notifications.gateway';
-import { NotificationsService } from './notifications.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { NotificationsGateway } from './notifications.gateway'
+import { NotificationsService } from './notifications.service'
 
 describe('NotificationsGateway', () => {
-  let gateway: NotificationsGateway;
+  let gateway: NotificationsGateway
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [NotificationsGateway, NotificationsService],
-    }).compile();
+    }).compile()
 
-    gateway = module.get<NotificationsGateway>(NotificationsGateway);
-  });
+    gateway = module.get<NotificationsGateway>(NotificationsGateway)
+  })
 
   it('should be defined', () => {
-    expect(gateway).toBeDefined();
-  });
-});
+    expect(gateway).toBeDefined()
+  })
+})

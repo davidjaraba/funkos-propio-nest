@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { FunkoMapper } from './funko.mapper';
-import { CreateFunkoDto } from '../dto/create-funko.dto';
+import { Test, TestingModule } from '@nestjs/testing'
+import { FunkoMapper } from './funko.mapper'
+import { CreateFunkoDto } from '../dto/create-funko.dto'
 
 describe('FunkoMapper', () => {
-  let provider: FunkoMapper;
+  let provider: FunkoMapper
 
   const categoria = {
     id: '1',
@@ -12,7 +12,7 @@ describe('FunkoMapper', () => {
     updatedAt: new Date(),
     isDeleted: false,
     funkos: [],
-  };
+  }
 
   const funko = {
     id: 1,
@@ -25,7 +25,7 @@ describe('FunkoMapper', () => {
     createdAt: new Date(155555),
     updatedAt: new Date(155555),
     isDeleted: false,
-  };
+  }
 
   const createFunkoDto: CreateFunkoDto = {
     nombre: 'funko1',
@@ -34,19 +34,17 @@ describe('FunkoMapper', () => {
     cantidad: 3,
     stock: 3,
     categoria: 'DC',
-  };
+  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [FunkoMapper],
-    }).compile();
+    }).compile()
 
-    provider = module.get<FunkoMapper>(FunkoMapper);
-  });
+    provider = module.get<FunkoMapper>(FunkoMapper)
+  })
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
-  });
-
-
-});
+    expect(provider).toBeDefined()
+  })
+})

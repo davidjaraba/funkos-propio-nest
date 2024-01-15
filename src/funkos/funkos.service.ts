@@ -91,6 +91,7 @@ export class FunkosService {
         marca: [FilterOperator.EQ, FilterSuffix.NOT],
         modelo: [FilterOperator.EQ, FilterSuffix.NOT],
         descripcion: [FilterOperator.EQ, FilterSuffix.NOT],
+        nombre: true,
         precio: true,
         stock: true,
         isDeleted: [FilterOperator.EQ, FilterSuffix.NOT],

@@ -8,6 +8,9 @@ import { StorageModule } from './storage/storage.module'
 import { NotificationsModule } from './notifications/notifications.module'
 import { CacheModule } from '@nestjs/cache-manager'
 import { PedidosModule } from './pedidos/pedidos.module';
+import { Categoria } from "./categorias/entities/categoria.entity";
+import { Funko } from "./funkos/entities/funko.entity";
+import { Pedido } from "./pedidos/entities/pedido.entity";
 
 @Module({
   imports: [
@@ -21,17 +24,19 @@ import { PedidosModule } from './pedidos/pedidos.module';
       username: 'appAdmin', // Nombre de usuario
       password: 'supersecure', // Contraseña de usuario
       database: 'NEST_DB', // Nombre de la base de datos
-      entities: [`${__dirname}/**/*.entity{.ts,.js}`], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
+      //`${__dirname}/**/*.entity{.ts,.js}`
+      entities: [Categoria, Funko], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
       synchronize: true, // Sincronizar la base de datos
     }),
     TypeOrmModule.forRoot({
+      name: 'mongo',
       type: 'mongodb', // Tipo de base de datos
       host: 'localhost', // Dirección del servidor
       port: 27017, // Puerto del servidor
       username: 'appAdmin', // Nombre de usuario
       password: 'supersecure', // Contraseña de usuario
       database: 'NEST_DB', // Nombre de la base de datos
-      entities: [`${__dirname}/**/*.entity{.ts,.js}`], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
+      entities: [Pedido], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
       synchronize: true, // Sincronizar la base de datos
     }),
     StorageModule,

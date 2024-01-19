@@ -11,6 +11,7 @@ export class FunkoMapper {
   toFunkoResponse(funko: Funko) {
     return plainToClass(ResponseFunkoDto, {
       ...funko,
+      precio: Number(funko.precio),
       categoria: funko.categoria.nombre,
     })
   }

@@ -16,7 +16,7 @@ services:
       - tienda-network
 
   mongo-db:
-    container_name: tienda-db_mongo
+    container_name: mongo-db
     image: mongo:5.0
     restart: always
     env_file: .env
@@ -26,8 +26,8 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     ports:
       - ${MONGO_PORT}:27017
-#    volumes:
-#      - ./database/tienda.js:/docker-entrypoint-initdb.d/tienda.js:ro
+    volumes:
+      - ./database/tienda.js:/docker-entrypoint-initdb.d/tienda.js:ro
     networks:
       - tienda-network
 

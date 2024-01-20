@@ -145,7 +145,7 @@ export class FunkosService {
   }
 
   async update(id: number, updateFunkoDto: UpdateFunkoDto) {
-    await this.findOne(id)
+    const funkoToUpdate = await this.findOne(id)
 
     const categoria =
       (await this.categoriaRepository.findOneBy({
@@ -157,9 +157,14 @@ export class FunkosService {
 
     const funko = this.funkoMapper.toFunko(updateFunkoDto, categoria)
 
-    const res = this.funkoMapper.toFunkoResponse(
-      await this.funkoRepository.save(funko),
-    )
+    console.log(funko)
+
+    await this.funkoRepository.save({ ...funko, id })
+
+    const res = this.funkoMapper.toFunkoResponse({
+      ...funkoToUpdate,
+      ...funko,
+    })
 
     this.onChange(NotificacionTipo.UPDATE, res)
 

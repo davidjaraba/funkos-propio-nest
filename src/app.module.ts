@@ -14,9 +14,15 @@ import { Pedido } from './pedidos/entities/pedido.entity'
 import { AuthModule } from './auth/auth.module'
 import { Usuario } from './users/entities/user.entity'
 import { Role, UserRole } from './users/entities/user-role.entity'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
+    ConfigModule.forRoot(
+      process.env.NODE_ENV === 'dev'
+        ? { envFilePath: '.env.dev' || '.env' }
+        : { envFilePath: '.env.prod' },
+    ),
     CacheModule.register(),
     FunkosModule,
     CategoriasModule,

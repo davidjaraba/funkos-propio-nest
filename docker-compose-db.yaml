@@ -1,4 +1,20 @@
 services:
+  tienda-api-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tienda-api-rest
+    restart: always
+    env_file: .env.prod
+    ports:
+      - ${API_PORT}:3000
+    volumes:
+      - storage-dir:/app/storage-dir
+      - ./cert:/app/cert
+    networks:
+      - tienda-network
+
+
   postgresql-database:
     image: postgres:16-alpine
     restart: always
@@ -31,19 +47,9 @@ services:
     networks:
       - tienda-network
 
-#  mongo:
-#    image: mongo
-#    restart: always
-#    ports:
-#      - ${MONGO_PORT}:27017
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USER}
-#      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-#      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
-#    volumes:
-#      - ./data/orders.js:/docker-entrypoint-initdb.d/orders.js:ro
-#    networks:
-#      - tienda-network
+# Volume para guardar los datos de la base de datos
+volumes:
+  storage-dir:
 
 networks:
   tienda-network:

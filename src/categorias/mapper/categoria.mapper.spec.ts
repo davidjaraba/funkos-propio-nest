@@ -9,8 +9,8 @@ describe('Mapper', () => {
   const categoriaToTest: Categoria = {
     id: '1',
     nombre: 'categoria1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date(3),
+    updatedAt: new Date(3),
     isDeleted: false,
     funkos: [],
   }
@@ -18,8 +18,8 @@ describe('Mapper', () => {
   const categoriaToResponseDto: ResponseCategoriaDto = {
     id: '1',
     nombre: 'categoria1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date(3),
+    updatedAt: new Date(3),
     isDeleted: false,
     funkos: [],
   }

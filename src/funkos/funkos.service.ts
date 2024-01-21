@@ -45,6 +45,10 @@ export class FunkosService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+  /**
+   * Crea un nuevo funko
+   * @param createFunkoDto
+   */
   async create(createFunkoDto: CreateFunkoDto) {
     const categoria =
       (await this.categoriaRepository.findOneBy({
@@ -67,6 +71,10 @@ export class FunkosService {
     return res
   }
 
+  /**
+   * Devuelve todos los funkos
+   * @param query
+   */
   async findAll(query: PaginateQuery) {
     this.logger.log('Find all funkos')
     // check cache
@@ -116,6 +124,10 @@ export class FunkosService {
     return res
   }
 
+  /**
+   * Devuelve un funko por id
+   * @param id
+   */
   async findOne(id: number) {
     const cache: ResponseFunkoDto = await this.cacheManager.get(`funko_${id}`)
 
@@ -144,6 +156,11 @@ export class FunkosService {
     return res
   }
 
+  /**
+   * Actualiza un funko
+   * @param id
+   * @param updateFunkoDto
+   */
   async update(id: number, updateFunkoDto: UpdateFunkoDto) {
     const funkoToUpdate = await this.findOne(id)
 
@@ -173,6 +190,10 @@ export class FunkosService {
     return res
   }
 
+  /**
+   * Elimina un funko
+   * @param id
+   */
   async remove(id: number) {
     const res = await this.findOne(id)
 
@@ -184,6 +205,10 @@ export class FunkosService {
     return this.funkoRepository.delete(id)
   }
 
+  /**
+   * Elimina un funko
+   * @param id
+   */
   async softRemove(id: number) {
     const res = await this.findOne(id)
 
@@ -202,6 +227,12 @@ export class FunkosService {
     this.onChange(NotificacionTipo.DELETE, res)
   }
 
+  /**
+   * Actualiza la imagen de un funko
+   * @param id
+   * @param file
+   * @param req
+   */
   async updateImage(id: number, file: Express.Multer.File, req: Request) {
     if (!file) throw new BadRequestException('Fichero no enviado')
 
@@ -232,6 +263,12 @@ export class FunkosService {
     return res
   }
 
+  /**
+   * Envía una notificación de cambio
+   * @param tipo
+   * @param data
+   * @private
+   */
   private onChange(tipo: NotificacionTipo, data: ResponseFunkoDto) {
     const notificacion = new Notificacion<ResponseFunkoDto>(
       'PRODUCTOS',
@@ -242,6 +279,10 @@ export class FunkosService {
     this.funkoNotificationsGateway.sendMessage(notificacion)
   }
 
+  /**
+   * Invalida una clave de caché
+   * @param keyPattern
+   */
   async invalidateCacheKey(keyPattern: string): Promise<void> {
     const cacheKeys = await this.cacheManager.store.keys()
     const keysToDelete = cacheKeys.filter((key) => key.startsWith(keyPattern))

@@ -7,10 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { StorageModule } from './storage/storage.module'
 import { NotificationsModule } from './notifications/notifications.module'
 import { CacheModule } from '@nestjs/cache-manager'
-import { PedidosModule } from './pedidos/pedidos.module';
-import { Categoria } from "./categorias/entities/categoria.entity";
-import { Funko } from "./funkos/entities/funko.entity";
-import { Pedido } from "./pedidos/entities/pedido.entity";
+import { PedidosModule } from './pedidos/pedidos.module'
+import { Categoria } from './categorias/entities/categoria.entity'
+import { Funko } from './funkos/entities/funko.entity'
+import { Pedido } from './pedidos/entities/pedido.entity'
+import { AuthModule } from './auth/auth.module'
+import { Usuario } from './users/entities/user.entity'
+import { Role, UserRole } from './users/entities/user-role.entity'
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { Pedido } from "./pedidos/entities/pedido.entity";
       password: 'supersecure', // Contraseña de usuario
       database: 'NEST_DB', // Nombre de la base de datos
       //`${__dirname}/**/*.entity{.ts,.js}`
-      entities: [Categoria, Funko], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
+      entities: [Categoria, Funko, Usuario, UserRole], // Entidades de la base de datos (buscar archivos con extensión .entity.ts o .entity.js)
       synchronize: true, // Sincronizar la base de datos
     }),
     TypeOrmModule.forRoot({
@@ -42,6 +45,7 @@ import { Pedido } from "./pedidos/entities/pedido.entity";
     StorageModule,
     NotificationsModule,
     PedidosModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

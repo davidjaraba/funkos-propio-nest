@@ -24,6 +24,8 @@ import { diskStorage } from 'multer'
 import { extname, parse } from 'path'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import { Paginate, PaginateQuery } from 'nestjs-paginate'
+import { Roles, RolesAuthGuard } from '../auth/guards/roles-auth.guard'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 @UseInterceptors(CacheInterceptor)
 @Controller('v1/funkos')
@@ -32,6 +34,8 @@ export class FunkosController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(JwtAuthGuard, RolesAuthGuard) // Aplicar el guard aquí
+  @Roles('ADMIN')
   create(@Body() createFunkoDto: CreateFunkoDto) {
     return this.funkosService.create(createFunkoDto)
   }
@@ -46,6 +50,8 @@ export class FunkosController {
     return this.funkosService.findOne(+id)
   }
 
+  @UseGuards(JwtAuthGuard, RolesAuthGuard) // Aplicar el guard aquí
+  @Roles('ADMIN')
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: string,
@@ -54,12 +60,16 @@ export class FunkosController {
     return this.funkosService.update(+id, updateFunkoDto)
   }
 
+  @UseGuards(JwtAuthGuard, RolesAuthGuard) // Aplicar el guard aquí
+  @Roles('ADMIN')
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: string) {
     return this.funkosService.softRemove(+id)
   }
 
+  @UseGuards(JwtAuthGuard, RolesAuthGuard) // Aplicar el guard aquí
+  @Roles('ADMIN')
   @UseGuards(FunkoExistsGuard)
   @Patch('/imagen/:id')
   @UseInterceptors(

@@ -17,6 +17,10 @@ import {
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate'
 import { Funko } from '../funkos/entities/funko.entity'
+import { Usuario } from '../users/entities/user.entity'
+
+export const PedidosOrderByValues: string[] = ['_id', 'idUsuario'] // Lo usamos en los pipes
+export const PedidosOrderValues: string[] = ['asc', 'desc'] // Lo usamos en los pipes
 
 @Injectable()
 export class PedidosService {
@@ -28,6 +32,8 @@ export class PedidosService {
     private readonly pedidoMapper: PedidosMapper,
     @InjectRepository(Funko)
     private readonly funkoRepository: Repository<Funko>,
+    @InjectRepository(Usuario)
+    private readonly usuariosRepository: Repository<Usuario>,
   ) {}
 
   async create(createPedidoDto: CreatePedidoDto) {
@@ -168,6 +174,17 @@ export class PedidosService {
     )
 
     return pedido
+  }
+
+  async userExists(idUsuario: number): Promise<boolean> {
+    this.logger.log(`Comprobando si existe el usuario ${idUsuario}`)
+    const usuario = await this.usuariosRepository.findOneBy({ id: idUsuario })
+    return !!usuario
+  }
+
+  async getPedidosByUser(idUsuario: number): Promise<Pedido[]> {
+    this.logger.log(`Buscando pedidos por usuario ${idUsuario}`)
+    return await this.pedidoRepository.find({ idUsuario })
   }
 
   private async returnStockPedidos(pedido: Pedido): Promise<Pedido> {

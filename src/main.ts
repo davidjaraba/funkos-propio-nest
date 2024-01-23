@@ -20,7 +20,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { httpsOptions })
 
   // Configuración de la versión de la API
-  app.setGlobalPrefix(process.env.API_VERSION || 'v1')
+  // app.setGlobalPrefix(process.env.API_VERSION || 'v1')
 
   // Configuración de Swagger solo en modo desarrollo
   if (process.env.NODE_ENV === 'dev') {

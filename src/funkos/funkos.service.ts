@@ -22,7 +22,7 @@ import { NotificationsGateway } from '../notifications/notifications.gateway'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache } from 'cache-manager'
 import { hash } from 'typeorm/util/StringUtils'
-import { query } from 'express'
+import { Request } from 'express'
 import {
   FilterOperator,
   FilterSuffix,

@@ -38,6 +38,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger'
 import { ResponseFunkoDto } from './dto/response-funko.dto'
+import { Request } from "express";
 
 @UseInterceptors(CacheInterceptor)
 @Controller('v1/funkos')

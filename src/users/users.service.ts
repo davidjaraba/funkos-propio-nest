@@ -41,7 +41,10 @@ export class UsersService {
   async findOne(id: number) {
     this.logger.log(`findOne: ${id}`)
     return this.usuariosMapper.toResponseDto(
-      await this.usuariosRepository.findOneBy({ id }),
+      await this.usuariosRepository.findOneBy({ id }) ||
+      (() => {
+        throw new NotFoundException('Usuario no encontrado')
+      })(),
     )
   }
 

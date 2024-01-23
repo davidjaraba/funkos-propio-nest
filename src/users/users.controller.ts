@@ -44,7 +44,7 @@ export class UsersController {
 
   @Get(':id')
   @Roles('ADMIN')
-  async findOne(id: number) {
+  async findOne(@Param('id') id: number) {
     this.logger.log(`findOne: ${id}`)
     return await this.usersService.findOne(id)
   }
